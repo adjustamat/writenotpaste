@@ -1,0 +1,5 @@
+<resources>
+   <string name="app_name">Write, not paste</string>
+<!--   <string name="lblWritingTextBox">Write here:</string>-->
+   <string name="toastSuccess">You succeeded in copying without pasting!</string>
+</resources>
