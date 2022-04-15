@@ -53,6 +53,13 @@ captures/
 .cxx
 #local.properties
 
+#non-default:
+.idea/.gitignore
+.idea/.name
+inspectionProfiles/
+.idea/compiler.xml
+.idea/misc.xml
+
 # IntelliJ
 *.iml
 .idea/workspace.xml

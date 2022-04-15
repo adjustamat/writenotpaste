@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
@@ -15,15 +16,18 @@ import android.view.View.OnTouchListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.urbandroid.sleep.captcha.CaptchaSupport;
+import com.urbandroid.sleep.captcha.CaptchaSupportFactory;
 
 public class WriteActivity extends AppCompatActivity implements TextWatcher,
                                                                 OnFocusChangeListener,
                                                                 OnTouchListener
 {
    //private static final String DBG = "WriteActivity";
-   TextView textToCopy;
-   EditText writingTextBox;
-   CountDownTimer timer = new CountDownTimer(2, 2)
+   private TextView textToCopy;
+   private EditText writingTextBox;
+   private CaptchaSupport support;
+   private final CountDownTimer timer = new CountDownTimer(2, 2)
    {
       public void onTick(long millisUntilFinished){
       }
@@ -33,7 +37,8 @@ public class WriteActivity extends AppCompatActivity implements TextWatcher,
       }
    };
    
-   @SuppressLint("ClickableViewAccessibility") @Override
+   @SuppressLint("ClickableViewAccessibility")
+   @Override
    protected void onCreate(Bundle savedInstanceState){
       super.onCreate(savedInstanceState);
       setContentView(R.layout.act_write);
@@ -42,6 +47,12 @@ public class WriteActivity extends AppCompatActivity implements TextWatcher,
       writingTextBox.setOnFocusChangeListener(this);
       writingTextBox.setOnTouchListener(this);
       writingTextBox.addTextChangedListener(this);
+      support = CaptchaSupportFactory.create(this);
+   }
+   
+   protected void onNewIntent(Intent intent){
+      super.onNewIntent(intent);
+      support = CaptchaSupportFactory.create(this, intent);
    }
    
    public void clearClipboard(){
@@ -49,7 +60,8 @@ public class WriteActivity extends AppCompatActivity implements TextWatcher,
        ClipData.newPlainText(getText(R.string.app_name), getText(R.string.app_name)));
    }
    
-   @Override protected void onResume(){
+   @Override
+   protected void onResume(){
       super.onResume();
       
       textToCopy.setText("Text from intent"); // TODO: trim spaces and double-spaces.
@@ -66,17 +78,21 @@ public class WriteActivity extends AppCompatActivity implements TextWatcher,
       writingTextBox.setOnFocusChangeListener(this);
    }
    
-   @Override public void onFocusChange(View view, boolean b){
+   @Override
+   public void onFocusChange(View view, boolean b){
       timer.start();
    }
    
-   @Override public void beforeTextChanged(CharSequence sequence, int i, int i1, int i2){
+   @Override
+   public void beforeTextChanged(CharSequence sequence, int i, int i1, int i2){
    }
    
-   @Override public void onTextChanged(CharSequence sequence, int i, int i1, int i2){
+   @Override
+   public void onTextChanged(CharSequence sequence, int i, int i1, int i2){
    }
    
-   @Override public void afterTextChanged(Editable editable){
+   @Override
+   public void afterTextChanged(Editable editable){
       String s = textToCopy.getText().toString();
       if(s.length() < 1) return;
       if(writingTextBox.getText().toString().equalsIgnoreCase(s)){
@@ -86,8 +102,15 @@ public class WriteActivity extends AppCompatActivity implements TextWatcher,
    }
    
    @SuppressLint("ClickableViewAccessibility")
-   @Override public boolean onTouch(View view, MotionEvent event){
+   @Override
+   public boolean onTouch(View view, MotionEvent event){
       clearClipboard();
       return false;
+   }
+   
+   @Override
+   protected void onDestroy(){
+      super.onDestroy();
+      support.destroy();
    }
 }

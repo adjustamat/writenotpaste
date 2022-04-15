@@ -14,11 +14,15 @@
       <activity
        android:name=".WriteActivity"
        android:exported="true"
+       android:launchMode="singleTop"
        >
+         <meta-data
+          android:name="com.urbandroid.sleep.captcha.meta.has_difficulty"
+          android:value="true"
+          />
          <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-
-            <category android:name="android.intent.category.LAUNCHER" />
+            <action android:name="com.urbandroid.sleep.captcha.intent.action.OPEN" />
+            <action android:name="com.urbandroid.sleep.captcha.intent.action.CONFIG"/>
          </intent-filter>
       </activity>
    </application>
